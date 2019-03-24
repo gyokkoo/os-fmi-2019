@@ -178,4 +178,4 @@
 
 Пример: <br/>hello, human - this is me! <br/>Hello, s63465<br/>Hello, s64898<br/>
 
-//TODO: Solve this when connected in os-server
+//TODO: Solve this when connected to os-server
