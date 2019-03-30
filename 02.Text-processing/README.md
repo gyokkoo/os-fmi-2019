@@ -211,3 +211,87 @@
 **Зад 43. 03-b-9052**<br/>Използвайки файл population.csv, намерете през коя година в България има най-много население.
 
 `cat population.csv | grep "BGR" | sort -nr -t ',' -k 4 | head -n 1 | awk -F ',' '{print $3; }'`
+
+**Зад 44. 03-b 9053**<br/>Използвайки файл population.csv, намерете коя държава има най-много население през 2016. А коя е с най-малко население?
+
+`cat population.csv | grep ",2016," | sed -r "s/^(.*),.+,([0-9]+)$/\1:\2/" | sort -nr -t ':' -k 2 | head -n 1`
+
+`cat population.csv | grep ",2016," | sed -r "s/^(.*),.+,([0-9]+)$/\1:\2/" | sort -nr -t ':' -k 2 | tail -n 1`
+
+**Зад 45. 03-b-9054**<br/>Използвайки файл population.csv, намерете коя държава е на 42-ро място по население през 1969. Колко е населението й през тази година?
+
+`"$(cat population.csv | grep ",1969," | sed -r "s/^(.*),.+,([0-9]+)$/\1:\2/" | sort -nr -t ':' -k 2 | head -n 42 | tail -n 1 | cut -d ',' -f 1)" population.csv | grep 2016 | cut -d ',' -f4`
+
+**Зад 46. 03-b-9100**<br/>В home директорията си изпълнете командата `curl -o songs.tar.gz "http://fangorn.uni-sofia.bg/misc/songs.tar.gz"`
+
+**Зад 47. 03-b-9101**<br/>Да се разархивира архивът songs.tar.gz в папка songs във вашата home директорията.
+
+`tar -xzvf songs.tar.gz -C ~/songs`
+
+**Зад 48. 03-b-9102**<br/>Да се изведат само имената на песните.
+
+`find ~/songs -name "*.ogg" | sed -r "s/.*- (.*).ogg$/\1/"'`
+
+**Зад 49. 03-b-9103**<br />Имената на песните да се направят с малки букви, да се заменят спейсовете с долни черти и да се сортират.
+
+`find ~/songs -name "*.ogg" | sed -r "s/.*- (.*).ogg$/\1/" | tr '[:upper:]' '[:lower:]' | tr ' ' '_' | sort`
+
+**Зад 50. 03-b-9104**<br/>Да се изведат всички албуми, сортирани по година.
+
+`find ~/songs -name "*.ogg" | sed -r "s/.*\((.*)\).ogg$/\1/" | sort -r -t ',' -k 2`
+
+**Зад 51. 03-b-9105**<br/>Да се преброят/изведат само песните на Beatles и Pink.
+
+`find ~/songs -name "*.ogg" | egrep "(Beatles -|Pink -) (.*).ogg" | cut -d '/' -f 6-`
+
+**Зад 52. 03-b-9106**<br/>Да се направят директории с имената на уникалните групи. За улеснение, имената от две думи да се напишат слято: Beatles, PinkFloyd, Madness
+
+`find ~/songs -name "*.ogg" | sed -r "s/^.*songs\/(.*) -.*$/\1/" | sort | uniq | sed "s/ //" | xargs mkdir`
+
+**Зад 53. 03-b-9200**<br/>Напишете серия от команди, които извеждат детайли за файловете и директориите в текущата директория, които имат същите права за достъп както най-големият файл в /etc директорията.
+
+`find /etc -type f -printf "%s %p %m\n" 2>/dev/null | sort -n | tail -1 | cut -d ' ' -f 3 | xargs find . -maxdepth 1 -perm`
+
+**Зад 54. 03-b-9300**<br/>Дадени са ви 2 списъка с email адреси - първият има 12 валидни адреса, а вторията има само невалидни. Филтрирайте всички адреси, така че да останат само валидните. Колко кратък регулярен израз можете да направите за целта?
+
+```
+Валидни email адреси (12 на брой):
+email@example.com
+firstname.lastname@example.com
+email@subdomain.example.com
+email@123.123.123.123
+1234567890@example.com
+email@example-one.com
+_______@example.com
+email@example.name
+email@example.museum
+email@example.co.jp
+firstname-lastname@example.com
+unusually.long.long.name@example.com
+
+Невалидни email адреси:
+#@%^%#$@#$@#.com
+@example.com
+myemail
+Joe Smith <email@example.com>
+email.example.com
+email@example@example.com
+.email@example.com
+email.@example.com
+email..email@example.com
+email@-example.com
+email@example..com
+Abc..123@example.com
+(),:;<>[\]@example.com
+just"not"right@example.com
+this\ is"really"not\allowed@example.com
+```
+
+`^[^\.](?!.*(\.)\1{1,})[^@"][a-zA-Z_0-9.-]+[^.]@[^\>-][a-zA-Z_0-9.-]+$`  // Not proud of this regex
+
+**Зад 55. 03-b-9500** <br />
+
+Запишете във файл next потребителското име на човека, който е след вас в изхода на who. Намерете в /etc/passwd допълнителната ифнромация (име, специалност...) и също го запишете във файла next. 
+
+`who | grep 62117 -A 1 | grep -v 62117 | tr -s ' ' | cut -d ' ' -f 1 > next`
+
