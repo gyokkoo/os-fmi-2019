@@ -179,3 +179,35 @@
 Пример: <br/>hello, human - this is me! <br/>Hello, s63465<br/>Hello, s64898<br/>
 
 //TODO: Solve this when connected to os-server
+
+**Зад 37. 03-b-8520**<br/>Изпишете имената на студентите от /etc/passwd с главни букви.
+
+`cat /etc/passwd | cut -d ":" -f 5 | sed -r "s/^([a-zA-Z]*\s[a-zA-Z ]*).*$/\1/" | grep -v , | tr '[:lower:]' '[:upper:]'`
+
+**Зад 38. 03-b-8600**<br/>Shell Script-овете са файлове, които по конвенция имат разширение .sh. Всеки такъв файл започва с "#!<interpreter>" , където <interpreter> указва на операционната система какъв интерпретатор да пусне (пр: "#!/bin/bash", "#!/usr/bin/python3 -u"). <br/>Намерете всички .sh файлове и проверете кой е най-често използваният интерпретатор.
+
+`find / -type f -name '*.sh' -readable -exec head -n 1 {} \; 2>/dev/null | grep '^#!' | sort | uniq -c | sort -nr`
+
+**Зад 39. 03-b-8700**<br/>Намерете 5-те най-големи групи подредени по броя на потребителите в тях.
+
+`cat /etc/group | cut -d : -f 4 | awk -F , '{print NF-1}' > usersCount`
+
+`paste usersCount /etc/group | sort -t $'\t' -k 1 -n -r | head -n 5`
+
+**Зад 40. 03-b-9000**<br/>Направете файл eternity. Намерете всички файлове, които са били модифицирани в последните 15мин (по възможност изключете .).  Запишете във eternity името на файла и часa на последната промяна.
+
+`find / -type f -mmin -15 2>/dev/null | xargs stat --format "%n : %y > eternity"`
+
+**Зад 41. 03-b-9050**<br/>
+
+Копирайте файл /home/tony/population.csv във вашата home директория.
+
+`cp /home/tony/population.csv ~`
+
+**Зад 42. 03-b-9051**<br/>Използвайки файл population.csv, намерете колко е общото население на света през 2008 година. А през 2016?
+
+`cat population.csv | grep ",2008," | sed -r "s/^.+2008,([0-9]*)$/\1/" | awk '{ sum += $1 } END {print sum }'` - 6691190404, а през 2016 е 7413672933
+
+**Зад 43. 03-b-9052**<br/>Използвайки файл population.csv, намерете през коя година в България има най-много население.
+
+`cat population.csv | grep "BGR" | sort -nr -t ',' -k 4 | head -n 1 | awk -F ',' '{print $3; }'`
