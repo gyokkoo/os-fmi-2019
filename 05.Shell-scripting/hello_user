@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Да се напише shell скрипт, който приканва потребителя да въведе име (низ) и изпечатва "Hello, името".
+# Author: Gyoko
+
+# Ask for user input
+read -p "What is your name?": userInput
+
+echo "Hello, $userInput"
+

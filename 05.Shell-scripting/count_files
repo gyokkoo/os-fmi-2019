@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Да се напише shell скрипт, който приканва потребителя да въведе пълното име на директория 
+# и извежда на стандартния изход подходящо съобщение за броя на всички файлове и директории в нея.
+
+read -p "Enter directory: " dir
+
+if [[ ! -d $dir ]]; then
+    echo "${dir} is not a directory"
+    exit 1
+fi
+
+files_count=$(find "$dir" -type f | wc -l)
+directories_count=$(find "$dir" -type d | wc -l)
+echo "${dir} has total ${files_count} files and ${directories_count} directories"
+exit 0
