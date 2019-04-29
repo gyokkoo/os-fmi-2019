@@ -1,0 +1,55 @@
+This is documentation file for 62117.sh script.
+
+Used references:
+https://stackoverflow.com/questions/17333755/extract-xml-value-in-bash-script
+https://unix.stackexchange.com/questions/2987/how-do-i-convert-an-epoch-timestamp-to-a-human-readable-format-on-the-cli
+https://unix.stackexchange.com/questions/360324/addition-of-two-floating-numbers-using-shell-script
+https://stackoverflow.com/questions/8654051/how-to-compare-two-floating-point-numbers-in-bash
+https://stackoverflow.com/questions/9667081/how-do-you-trim-the-audio-files-end-using-sox
+https://devhints.io/bash
+https://www.geeksforgeeks.org/bc-command-linux-examples/
+
+executed:
+sudo apt install sox 
+
+The script logic is split in two main parts
+- Input validation
+- Parsing log file and extracting output
+
+1) Input validation
+Created two utility functions: usage() and error() for better code readability
+
+usage - prints useful script information for the user
+error - prints error message to stderr stream, invokes usage function and exit the code with exit code
+
+Validations:
+*.log file
+[[ ! -r $file ]] checks for available file and guarantee that it is readable
+[[ $(awk '{print NF}' $log_file | sort -nu) -ne "3" ]] guarantee that the file has always 3 columns
+[[ $(cat $log_file | cut -d ' ' -f 1 | sort | uniq -d | wc -l) -gt 0 ]] checks for duplication
+[[ $(grep -c 'beep' $log_file) -eq 0 ]] checks that beep stimul is present
+
+*.eeg file
+[[ $(cat $eeg_file | head -n 100 | grep -c 'StartRecordingDate') -eq 0 ]] - Check that StartRecordingDate exists
+[[ $(cat $eeg_file | head -n 100 | grep -c 'StartRecordingTime') -eq 0 ]] - Check that StartRecordingTime exists
+[[ $(cat $eeg_file | head -n 100 | grep -c 'SamplingRate') -eq 0 ]] - Check that SamlingRate exists
+
+*.wav file
+Check that file is readable
+
+output_directory
+If directory does not exist the script will try to create such directory
+and if could not create will exit with error 1
+
+2) Algorithm
+- First the script extracts needed data from xml file
+- Checks if $EEG_TZ is present, if not uses UTC as default
+- Parse the date from xml file to date command
+- Reading lines from timetable.log file and executing commands to create xml and wav files.
+
+Commands documentation: 
+$(echo ".........." | bc) - in order to use floating-point arithmetic operations
+$(echo "variable/1" | bc) - to round the floating-point to whole number
+sox wav_file output_dir trim trim_start trim_end - for cutting wav file
+sed -n "A,B p" file > output - extracting lines range from file
+
