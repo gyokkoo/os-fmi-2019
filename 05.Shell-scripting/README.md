@@ -214,10 +214,11 @@ done < "$c_file"
 echo  "The deepest nesting is ${max_nesting} levels"
 `````
 
-**Зад 13. 05-b-4300**<br/>Напишете shell script, който по подаден като аргумент файл с map между \<nickname\> -> <реален username в os-server> и nickname, ще ви улесни да изпращате съобщения на хората.
+**Зад 13. 05-b-4300**<br/>Напишете shell script, който по подаден като аргумент файл с map между \<nickname\> -> <реален sername в os-server> и nickname, ще ви улесни да изпращате съобщения на хората.
+
+Пример за файл указател: 
 
 ```
-Пример за файл указател:
 tinko	s61966
 minko	s881234
 ginko	s62000
@@ -227,6 +228,43 @@ senpai	velin
 
 Примерно извикване на програмата:<br/>./send_message myAddressBook dinko
 
+`````bash
+#!/bin/bash
+
+address_book=$1
+target=$2
+
+if [[ ! -r $address_book ]]; then
+    echo "Error! ${address_book} is not readable"
+    exit 1
+fi
+
+if [[ $(awk '{print NF}' $address_book | sort -nu) -ne "2" ]]; then
+    echo "Address book must have exactly 2 columns"
+    exit 1
+fi
+
+target_username=$(cat "${address_book}" | egrep "$target " | cut -d ' ' -f 2)
+if [[ -z $target_username ]]; then
+    echo "Username with nickname ${target} cannot be found in ${address_book}"
+    exit 1
+fi
+
+read -p "Enter message: " message
+echo "Sending message to ${target_username} "
+write ${target_username} "${message}"
+exit # Exit with exit code from last command
 `````
-// Work in progress
-`````
+
+**Зад 14. 05-b-4301** <br/>Напишете shell script, който автоматично да попълва файла указател от предната задача по подадени аргументи: име на файла указател, пълно име на човека (това, което очакваме да е в /etc/passwd) и избран за него nickname.<br/>Файлът указател нека да е във формат:<br/><nickname, който лесно да запомните> <username в os-server>
+
+Примерно извикване:<br/>./pupulate_address_book myAddressBook "Ben Dover" uncleBen
+
+Добавя към myAddressBook entry-то:<br/>uncleBen <username на Ben Dover в os-server>
+
+*Бонус: Ако има няколко съвпадения за въведеното име (напр. има 10 човека Ivan Petrov в /etc/passwd), всички те да се показват на потребителя, заедно с пореден номер >=1,след което той да може да въведе някой от номерата (или 0 ако не си хареса никого), и само избраният да бъде добавен към указателя.*
+
+``````
+// TODO
+``````
+
