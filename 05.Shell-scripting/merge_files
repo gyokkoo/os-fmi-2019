@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Зад 10. 05-b-3300
+# Да се напише shell скрипт, който чете от стандартния вход имената на 3 файла,
+# обединява редовете на първите два, подрежда ги по азбучен ред и резултата записва в третия файл.
+
+read -p "Enter first file: " firstFile
+read -p "Enter second file: " secondFile
+read -p "Enter output file: " output_file
+
+echo "Reading the content of first two files and saving it sorted in the third file..."
+cat $firstFile $secondFile | sort > $output_file
+echo "Result saved in ${output_file}"
