@@ -1,5 +1,7 @@
 ## Shell скриптове
 
+#### Pull requests with improvements or solutions are more than welcome :)
+
 **Зад 1. 05-а-2000**<br/>Сменете вашия prompt с нещо по желание. После върнете оригиналния обратно.
 
 `PS_OLD=$PS1`
@@ -55,9 +57,9 @@ scp "s62117@os-server:${filename}" "${destination}"
 #!/bin/bash
 
 # Ask for user input
-read -p "What is your name?": userInput
+read -p "What is your name?": user_input
 
-echo "Hello, $userInput"
+echo "Hello, $user_input"
 ````
 
 **Зад 6. 05-b-2800**<br/>Да се напише shell скрипт, който проверява дали подаденият му параметър се състои само от букви и цифри.
@@ -267,4 +269,149 @@ exit # Exit with exit code from last command
 ``````
 // TODO
 ``````
+
+**Зад 15. 05-b-4400**<br/>Напишете shell script, който да приема параметър име на директория, от която взимаме файлове, и опционално експлицитно име на директория, в която ще копираме файлове. Скриптът да копира файловете със съдържание, променено преди по-малко от 45 мин, от първата директория във втората директория. Ако втората директория не е подадена по име, нека да получи такова от днешната дата във формат, който ви е удобен. При желание новосъздадената директория да се архивира.
+
+``````bash
+#!/bin/bash
+
+set -x
+src_dir=$1
+if [[ ! -d $src_dir ]]; then
+    echo "Error! ${src_dir} is not a directory!"
+    exit 1
+fi
+
+dst_dir=$2
+if [[ -z $dst_dir ]]; then
+    dst_dir="${HOME}/$(date | tr -s ' ' '_')"
+    mkdir ${dst_dir}
+    echo "Destination directory is not set, using ${dst_dir}"
+fi
+
+echo "Copying recent modified files from ${src_dir} to ${dst_dir}"
+find "$src_dir" -type f -mmin -45 -exec cp '{}' ${dst_dir}  \;
+echo "Done, check ${src_dir} for new files"
+
+while true; do
+    read -p "Do you want to archieve the new folder? yes / no " answer
+    case $answer in
+        yes)
+            echo "Creating archieve"
+            tar -zcvf "${dst_dir}.tar.gz" "${dst_dir}"
+            echo "Archieve ${dst_dir}.tar.gz created"
+            break
+            ;;
+        no)
+            echo "Ok, bye!"
+            break
+            ;;
+    esac
+done
+``````
+
+**Зад 16. 05-b-4500**<br/>Да се напише shell скрипт, който получава при стартиране като параметър в командния ред идентификатор на потребител. Скриптът периодично (sleep(1)) да проверява дали потребителят е log-нат, и ако да - да прекратява изпълнението си, извеждайки на стандартния изход подходящо съобщение.
+
+``````
+// TODO
+``````
+
+**Зад 17. 05-b-4600**<br/>Да се напише shell скрипт, който валидира дали дадено цяло число попада в целочислен интервал. Скриптът приема 3 аргумента: числото, което трябва да се провери; лява граница на интервала; дясна граница на интервала.
+
+Скриптът да връща exit status:
+
+- 3, когато поне един от трите аргумента не е цяло число
+
+- 2, когато границите на интервала са обърнати
+
+- 1, когато числото не попада в интервала
+
+- 0, когато числото попада в интервала
+
+  ```
+  Примери:
+  $ ./validint.sh -42 0 102; echo $?
+  1
+  
+  $ ./validint.sh 88 94 280; echo $?
+  1
+  
+  $ ./validint.sh 32 42 0; echo $?
+  2
+  
+  $ ./validint.sh asdf - 280; echo $?
+  3
+  ```
+
+``````
+// Work in progress
+``````
+
+**Зад 18. 05-b-4700**<br/>
+
+**Зад 19. 05-b-4800**<br/>
+
+**Зад 20. 05-b-5500**<br/>
+
+**Зад 21. 05-b-6600**<br/>
+
+**Зад 22. 05-b-7000**<br/>
+
+**Зад 23. 05-b-7100**<br/>
+
+**Зад 24. 05-b-7200**<br/>
+
+**Зад 25. 05-b-7500**<br/>Напишете shell script guess, която си намисля число, което вие трябва да познате. В зависимост от вашия отговор, програмата трябва да ви казва "надолу" или "нагоре", докато не познате числото. Когато го познаете, програмата да ви казва с колко опита сте успели.
+
+``````bash
+#!/bin/bash
+
+# A simple guessing game
+
+# Get a random between [1:100]
+declare -ir target=$(( ($RANDOM % 100) + 1 ))
+
+# Initialize the user's guess
+declare -i guess=0
+declare -i tries=0
+until (( guess == target )); do
+    read -p "Guess? " guess
+
+    # If guess is 0, it was not a number
+    (( guess )) || continiue
+
+    tries=$(expr $tries + 1)
+    if (( guess < target )); then
+        echo "...biger!!"
+    elif (( guess > target )); then
+        echo "...smaller!"
+    else
+        echo "RIGHT! Guessed ${target} in ${tries} tries!"
+    fi
+done
+``````
+
+
+
+**Зад 26. 05-b-7550**<br/>
+
+**Зад 27. 05-b-7700**<br/>
+
+**Зад 28. 05-b-7800**<br/>
+
+**Зад 29. 05-b-8000**<br/>
+
+**Зад 30. 05-b-9100**<br/>
+
+**Зад 31. 05-b-9200**<br/>
+
+**Зад 32. 05-b-9500**<br/>
+
+**Зад 33. 05-b-9600**<br/>
+
+**Зад 32. 05-b-9601**<br/>
+
+
+
+
 
