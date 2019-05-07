@@ -343,13 +343,87 @@ done
   3
   ```
 
-``````
-// Work in progress
+``````bash
+#!/bin/bash
+
+target=$1
+left=$2
+right=$3
+
+num_regex="^[+-]?[0-9]+([.][0-9]+)?$"
+if [[ ! $target =~ $num_regex || ! $left =~ $num_regex || ! $right =~ $num_regex ]]; then
+    exit 3
+fi
+
+if (( $left <= $target )) && (( $target <= $right )); then
+    exit 0
+elif (( $left >= $target )) && (( $target >= $right )); then
+    exit 2
+fi
+
+if (( $left > $target )) || (($target > $right )); then
+    exit 1
+fi
 ``````
 
-**Зад 18. 05-b-4700**<br/>
+**Зад 18. 05-b-4700**<br/>Да се напише shell скрипт, който форматира големи числа, за да са по-лесни за четене. <br/>Като пръв аргумент на скрипта се подава цяло число.<br/>Като втори незадължителен аргумент се подава разделител. По подразбиране цифрите се разделят с празен интервал.
+
+Примери:
+
+`````
+$ ./nicenumber.sh 1889734853
+1 889 734 853
+
+$ ./nicenumber.sh 7632223 ,
+7,632,223
+`````
+
+``````bash
+#!/bin/bash
+
+number=$1
+if [[ ! $number =~ ^[0-9]+$ ]]; then
+    echo "The first argument is not a number!"
+    exit 1
+fi
+
+delimeter=$2
+if [[ -z $delimeter ]]; then
+    delimeter=" "
+    echo "Using space as default delimeter"
+fi
+
+reversed_num=$(echo "$number" | rev)
+echo $(echo $reversed_num | sed "s/.\{3\}/&$delimeter/g" | rev)
+``````
 
 **Зад 19. 05-b-4800**<br/>
+
+Да се напише shell скрипт, който приема файл и директория. Скриптът проверява в подадената директория и нейните под-директории дали съществува копие на подадения файл и отпечатва имената на намерените копия, ако съществуват такива.
+
+``````bash
+#!/bin/bash
+
+search_for=$1
+search_in=$2
+
+if [ ! -f $search_for ]; then
+    echo "Error! First argument is not a file!"
+    exit 1
+fi
+
+if [ ! -d $search_in ]; then
+    echo "Error! Second argument is not a directory!"
+    exit 1
+fi
+
+find "$search_in" -name "$search_for" | while read matched_copy; do
+    # Check if files are identical
+    if [[ $(cmp --silent $search_for $matched_copy) ]]; then
+        echo "$matched_copy"
+    fi
+done
+``````
 
 **Зад 20. 05-b-5500**<br/>
 
