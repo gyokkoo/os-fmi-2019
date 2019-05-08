@@ -27,3 +27,21 @@
 **Зад 6. 04-b-9000**<br/>Да се отпечатат PID на всички процеси, които имат повече деца от родителския си процес.
 
 `ps -eo pid,ppid | awk '$1 > $2 { print $1, $2  }'`
+
+``````bash
+#!/bin/bash
+
+children () {
+    ps -e -o pid --ppid "${1}" --no-headers | wc -l
+}
+
+ps -e -o pid,ppid --no-headers | while read PID_VAR PPID_VAR; do
+    if [[ ${PPID_VAR} -eq 0 ]]; then
+        continue
+    fi
+
+    if [ $(children "${PID_VAR}") -gt $(children "${PPID_VAR}") ]; then
+        echo "pid: ${PID_VAR}"
+    fi
+done
+``````
