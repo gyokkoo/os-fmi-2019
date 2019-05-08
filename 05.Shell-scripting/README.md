@@ -407,25 +407,100 @@ echo $(echo $reversed_num | sed "s/.\{3\}/&$delimeter/g" | rev)
 search_for=$1
 search_in=$2
 
-if [ ! -f $search_for ]; then
+if [[ ! -f $search_for ]]; then
     echo "Error! First argument is not a file!"
     exit 1
 fi
 
-if [ ! -d $search_in ]; then
+if [[ ! -d $search_in ]]; then
     echo "Error! Second argument is not a directory!"
     exit 1
 fi
 
-find "$search_in" -name "$search_for" | while read matched_copy; do
-    # Check if files are identical
-    if [[ $(cmp --silent $search_for $matched_copy) ]]; then
-        echo "$matched_copy"
+echo "$search_in"
+
+find "$search_in" | while read file; do
+    if [ ! -f $flie ]; then
+        continue;
+    fi
+
+    chk1=`cksum ${search_for} | awk -F " " '{print $1}'`
+    chk2=`cksum ${file} | awk -F " " '{print $1}'`
+    if [ $chk1 -eq $chk2 ]; then
+        echo "$file"
     fi
 done
 ``````
 
 **Зад 20. 05-b-5500**<br/>
+
+Да се напише shell script, който генерира HTML таблица със студентите в os-server. Таблицата трябва да има:
+
+- колони за факултетен номер, име, фамилия, специалност, курс и група
+
+- заглавен ред с имената нa колоните
+  Пример:
+
+  ```
+  $ ./passwd-to-html.sh > table.html
+  $ cat table.html
+  <table>
+    <tr>
+      <th>FN</th>
+      <th>Firstname</th>
+      <th>Lastname</th>
+      <th>Specialty</th>
+      <th>Course</th>
+      <th>Group</th>
+    </tr>
+    <tr>
+      <td>60309</td>
+      <td>Dragan</td>
+      <td>Petkanov</td>
+      <td>SI</td>
+      <td>4</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>81111</td>
+      <td>Pencho</td>
+      <td>Ivanov</td>
+      <td>KN</td>
+      <td>3</td>
+      <td>8</td>
+    </tr>
+  </table>
+  ```
+
+``````bash
+#!/bin/bash
+
+echo -e "<table>\n<tr>"
+echo -e "\t<th>FN</th>"
+echo -e "\t<th>Firstname</th>"
+echo -e "\t<th>Lastname</th>"
+echo -e "\t<th>Specialty</th>"
+echo -e "\t<th>Course</th>"
+echo -e "\t<th>Group</th>\n</tr>"
+
+cat /etc/passwd | while read line; do
+    username=$(echo $line | cut -d ':' -f 1)
+    info=$(echo $line | cut -d ':' -f 5)
+    fn=${username:1}
+
+    if [[ ! $fn =~ ^[0-9]+$ ]]; then
+        continue
+    fi
+
+    # TODO: Trivial, cut info into Firstname, Lastname, Specialty, Cource and Group
+    echo "<tr>"
+    echo -e "\t<td>$fn</td>"
+    echo -e "\t<td>$info</td>"
+    echo "</tr>"
+done
+
+echo "</table>"
+``````
 
 **Зад 21. 05-b-6600**<br/>
 
