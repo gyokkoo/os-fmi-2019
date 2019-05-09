@@ -502,7 +502,39 @@ done
 echo "</table>"
 ``````
 
-**Зад 21. 05-b-6600**<br/>
+**Зад 21. 05-b-6600**<br/>Да се напише shell скрипт, който получава единствен аргумент директория и изтрива всички повтарящи се (по съдържание) файлове в дадената директория. Когато има няколко еднакви файла, да се остави само този, чието име е лексикографски преди имената на останалите дублирани файлове.
+
+``````bash
+#!/bin/bash
+
+dir=$1
+if [[ ! -d $dir ]]; then
+    echo "Error! ${dir} is invalid directory!"
+fi
+
+# Finding duplicate files in O(n) time
+declare -A filecksums
+
+find "${dir}" -maxdepth 1 -type f | while read file; do
+    cksum=$(cksum <"$file" | tr ' ' '_')
+
+    if [[ -n "${filecksums[$cksum]}" ]] && [[ "${filecksums[$cksum]}" != "$file" ]]; then
+        echo "Found '$file' is a duplicate of '${filecksums[$cksum]}'"
+
+        # Delete lexicographically the first one
+        if [[ "${filecksums[$cksum]}" < "$file" ]]; then
+            rm -f "$file"
+            echo "Deleted '$file'"
+        else
+            rm -f "${filecksums[$cksum]}"
+            echo "Deleted '${filecksums[$cksum]}'"
+            filecksums[$cksum]="$file"
+        fi
+    else
+        filecksums[$cksum]="$file"
+    fi
+done
+``````
 
 **Зад 22. 05-b-7000**<br/>
 
