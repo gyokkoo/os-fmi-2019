@@ -17,13 +17,12 @@ int main() {
                args that will be passed to the program, with
                a terminating NULL
             */
-	        execlp(line, line, (char *)0);
+	    execlp(line, line, (char *)0);
 
             /* Don't come here unless execlp fails */
-	        printf("%s: not found\n", line);
-	        exit(1);
-	    }
-	    else {
+	    printf("%s: not found\n", line);
+	    exit(1);
+	} else {
             /* Parent */
             wait(0);
         }
